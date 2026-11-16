@@ -7,6 +7,7 @@ import World from "@/components/World";
 import CableScene from "@/components/CableScene";
 import StoryScene from "@/components/StoryScene";
 import StoryController from "@/components/StoryController";
+import Hero from "@/components/Hero";
 
 export default function Home() {
   const screenRef = useRef<HTMLDivElement>(null);
@@ -23,16 +24,30 @@ export default function Home() {
       .to(el, { scaleX: 0, duration: 0.18, ease: "power2.in" })
       .call(() => setScene("story"))
       .set(el, { scaleX: 1 })
-      .to(el, { scaleY: 1, filter: "brightness(1)", duration: 0.45, ease: "power3.out" });
+      .to(el, {
+        scaleY: 1,
+        filter: "brightness(1)",
+        duration: 0.45,
+        ease: "power3.out",
+      });
   };
 
   return (
     <>
       <Header />
       <World screenRef={screenRef} locked={scene === "cable"}>
-        {scene === "cable" ? <CableScene onConnect={goToStory} /> : <StoryScene />}
+        {scene === "cable" ? (
+          <CableScene onConnect={goToStory} />
+        ) : (
+          <StoryScene />
+        )}
       </World>
-      {scene === "story" && <StoryController />}
+      {scene === "story" && (
+        <>
+          <StoryController />
+          <Hero />
+        </>
+      )}
     </>
   );
 }

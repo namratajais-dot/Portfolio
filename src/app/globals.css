@@ -19,3 +19,14 @@ html.lenis body {
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
+
+@theme {
+  --color-wine-900: #3a0a16;
+  --color-wine-800: #5c1124;
+  --color-wine-700: #7a1a32;
+  --color-sand-50: #f8f0e3;
+  --color-sand-200: #eadbc3;
+  --color-blush: #e3a6a0;
+}
+
+@custom-variant wide (@media (min-aspect-ratio: 4/3));

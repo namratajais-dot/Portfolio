@@ -7,7 +7,7 @@ export default function LcdMonitor() {
     >
       {/* stand */}
       <div className="absolute left-1/2 top-full h-[36%] w-[2.2%] -translate-x-1/2 bg-[#14161c]" />
-      <div className="absolute left-1/2 top-[134%] h-[7%] w-[5%] -translate-x-1/2 bg-[#14161c]" />
+      {/* <div className="absolute left-1/2 top-[134%] h-[7%] w-[5%] -translate-x-1/2 bg-[#14161c]" /> */}
 
       {/* panel */}
       <div className="relative h-full w-full border-[3px] border-[#0b0c10] bg-black shadow-[0_0_6cqw_rgba(70,130,255,.35)]">

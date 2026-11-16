@@ -15,6 +15,20 @@ const COPY = [
   { small: "", big: "And so did I" },
 ];
 
+const screenClip = () => {
+  const { vw, vh, w, h } = worldSize();
+  const z = fitZoom(LCD, 0.9, 0.9);
+  const pw = LCD.w * w * z,
+    ph = LCD.h * h * z;
+  const cx = vw / 2 + 0.0025 * w * z;
+  const cy = vh / 2 + (0.47 - 0.5) * h;
+  const t = Math.max(0, cy - ph / 2),
+    b = Math.max(0, vh - cy - ph / 2);
+  const l = Math.max(0, cx - pw / 2),
+    r = Math.max(0, vw - cx - pw / 2);
+  return `inset(${t}px ${r}px ${b}px ${l}px round 6px)`;
+};
+
 export default function StoryController() {
   const lenisRef = useRef<Lenis | null>(null);
 
@@ -44,17 +58,21 @@ export default function StoryController() {
         },
       });
 
-      tl
-        .to("[data-hint]", { autoAlpha: 0, duration: 0.4 }, 0)
+      tl.to("[data-hint]", { autoAlpha: 0, duration: 0.4 }, 0)
 
         // 1) camera pulls back
         .fromTo(
           "[data-world]",
           { scale: () => fitZoom(CRT, 0.9, 1) },
           { scale: 1, duration: 3, ease: "power2.inOut" },
-          0
+          0,
         )
-        .fromTo("[data-room]", { filter: "blur(7px)" }, { filter: "blur(0px)", duration: 3 }, 0)
+        .fromTo(
+          "[data-room]",
+          { filter: "blur(7px)" },
+          { filter: "blur(0px)", duration: 3 },
+          0,
+        )
         .fromTo("[data-copy='0']", hidden, fadeIn, 2.2)
         .to("[data-copy='0']", fadeOut, 4.2)
 
@@ -71,6 +89,7 @@ export default function StoryController() {
         .fromTo("[data-copy='2']", hidden, fadeIn, 7.8)
 
         // 4) push in toward the screen (hand-off to Step 3)
+        // 4) push in toward the screen
         .to("[data-copy='2']", fadeOut, 9.4)
         .fromTo(
           "[data-world]",
@@ -81,11 +100,24 @@ export default function StoryController() {
             ease: "power2.inOut",
             immediateRender: false,
           },
-          9.4
+          9.4,
         )
-        .to("[data-skip]", { autoAlpha: 0, duration: 0.4 }, 10);
-    });
+        .to("[data-skip]", { autoAlpha: 0, duration: 0.4 }, 10.5)
 
+        // 5) burgundy takes over smoothly, then the room disappears
+        .fromTo("[data-header-brand]", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.6, immediateRender: false }, 10.8)
+        .fromTo(
+          "[data-hero]",
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 1.6, ease: "power1.inOut", immediateRender: false },
+          11.2
+        )
+        // explicit start AND end values, so scrolling back up always restores the room
+        .fromTo("[data-world]", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.01, immediateRender: false }, 12.8)
+        .from("[data-hero-line]", { yPercent: 110, duration: 1, stagger: 0.2 }, 12.6)
+        .from("[data-hero-fade]", { autoAlpha: 0, y: 20, duration: 1, stagger: 0.15 }, 12.8)
+        .fromTo("[data-nav]", { autoAlpha: 0, y: -10 }, { autoAlpha: 1, y: 0, duration: 1, immediateRender: false }, 13);
+ });
     return () => {
       ctx.revert();
       gsap.ticker.remove(tick);
@@ -106,7 +138,11 @@ export default function StoryController() {
       {/* Story text */}
       <div className="pointer-events-none fixed inset-x-0 top-[8dvh] z-40 px-4 text-center">
         {COPY.map((c, i) => (
-          <div key={i} data-copy={i} className="invisible absolute inset-x-0 px-4 opacity-0">
+          <div
+            key={i}
+            data-copy={i}
+            className="invisible absolute inset-x-0 px-4 opacity-0"
+          >
             <p className="font-sans text-[clamp(12px,min(2vw,3dvh),28px)] font-light uppercase tracking-wide text-white">
               {c.small}
             </p>
