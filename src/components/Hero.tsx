@@ -8,13 +8,13 @@ export default function Hero() {
     >
       {/* faint vertical grid lines */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.06]"
-        style={{ backgroundImage: "repeating-linear-gradient(90deg,#f8f0e3 0 1px,transparent 1px 8.333%)" }}
+        className="pointer-events-none absolute inset-0 opacity-[0.09]"
+        style={{ backgroundImage: "repeating-linear-gradient(90deg,#ebdddd 0 1.5px,transparent 1px 8.333%)" }}
       />
 
       {/* Name (top-left) */}
       <div data-hero-fade className="absolute left-4 top-4 md:left-5 md:top-5">
-        <p className="font-[family-name:var(--font-sans)] text-[clamp(16px,2.2vw,24px)] leading-tight">
+        <p className="font-[family-name:var(--font-sans)] text-[clamp(16px,2.2vw,34px)] leading-tight">
           Namrata Jaiswal
         </p>
         <p className="text-[10px] opacity-70 md:text-xs">Developer</p>

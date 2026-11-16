@@ -104,20 +104,38 @@ export default function StoryController() {
         )
         .to("[data-skip]", { autoAlpha: 0, duration: 0.4 }, 10.5)
 
-        // 5) burgundy takes over smoothly, then the room disappears
-        .fromTo("[data-header-brand]", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.6, immediateRender: false }, 10.8)
-        .fromTo(
-          "[data-hero]",
-          { autoAlpha: 0 },
-          { autoAlpha: 1, duration: 1.6, ease: "power1.inOut", immediateRender: false },
-          11.2
+        // 5) the hero text animates in (visibility of hero / nav / room is handled in sync() below)
+        .from(
+          "[data-hero-line]",
+          { yPercent: 110, duration: 1, stagger: 0.2 },
+          12.6,
         )
-        // explicit start AND end values, so scrolling back up always restores the room
-        .fromTo("[data-world]", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.01, immediateRender: false }, 12.8)
-        .from("[data-hero-line]", { yPercent: 110, duration: 1, stagger: 0.2 }, 12.6)
-        .from("[data-hero-fade]", { autoAlpha: 0, y: 20, duration: 1, stagger: 0.15 }, 12.8)
-        .fromTo("[data-nav]", { autoAlpha: 0, y: -10 }, { autoAlpha: 1, y: 0, duration: 1, immediateRender: false }, 13);
- });
+        .from(
+          "[data-hero-fade]",
+          { autoAlpha: 0, y: 20, duration: 1, stagger: 0.15 },
+          12.8,
+        );
+
+      // Visibility is computed from the timeline's current time every frame,
+      // so scrolling up always brings back the monitor, the dark room and the CRT.
+      const clamp01 = gsap.utils.clamp(0, 1);
+      const sync = () => {
+        const t = tl.time();
+        const heroA = gsap.parseEase("power1.inOut")(clamp01((t - 11.2) / 1.6));
+
+        gsap.set("[data-hero]", { autoAlpha: heroA });
+        gsap.set("[data-world]", { autoAlpha: t >= 12.8 ? 0 : 1 });
+        gsap.set("[data-header-brand]", {
+          autoAlpha: 1 - clamp01((t - 10.8) / 0.6),
+        });
+        gsap.set("[data-nav]", {
+          autoAlpha: clamp01((t - 13) / 1),
+          y: (1 - clamp01((t - 13) / 1)) * -10,
+        });
+      };
+      tl.eventCallback("onUpdate", sync);
+      sync();
+    });
     return () => {
       ctx.revert();
       gsap.ticker.remove(tick);
